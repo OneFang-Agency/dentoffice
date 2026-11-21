@@ -2245,9 +2245,16 @@ body:has(.hero .hours__status[data-state="open"]) .call-bar .btn:first-child::af
 
 @media (max-width: 900px) {
     /* The photo rises into the sky panel, its corner cut to the logo's
-       curve, so the hero ends in an arc instead of a hard edge. */
+       curve, so the hero ends in an arc instead of a hard edge. That curve
+       carries the "(" here, so the line arc beside the text is dropped and
+       the text gets the full width back. */
     .hero__panel {
         padding-bottom: 4.75rem;
+        padding-left: var(--gutter);
+    }
+
+    .hero__arc {
+        display: none;
     }
 
     .hero__media {
