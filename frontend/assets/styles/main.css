@@ -2257,6 +2257,18 @@ body:has(.hero .hours__status[data-state="open"]) .call-bar .btn:first-child::af
         display: none;
     }
 
+    /* The footer's closing ")" goes too, so the page opens and closes the
+       same way on small screens; the footer gets back the space it kept
+       free for the arc. */
+    .footer__arc {
+        display: none;
+    }
+
+    .footer__grid,
+    .footer__bottom {
+        padding-right: 0;
+    }
+
     .hero__media {
         z-index: 1;
         margin: -2.5rem 0 0 var(--gutter);
