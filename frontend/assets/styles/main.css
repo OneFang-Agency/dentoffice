@@ -941,6 +941,170 @@ ul {
     margin-top: 1.5rem;
 }
 
+/* ---------- Reviews ---------- */
+.reviews__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem 4rem;
+}
+
+.reviews__rating {
+    display: grid;
+    gap: 0.35rem;
+    justify-items: start;
+    color: var(--muted);
+}
+
+.reviews__rating p:first-child {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+}
+
+.reviews__score {
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--ink);
+}
+
+.reviews__rating .text-link {
+    margin-top: 0.5rem;
+    color: var(--ink);
+}
+
+/* Stars are drawn, in the site's thin-line language: an outline row for
+   what's possible, a filled row for what was given. */
+.stars {
+    position: relative;
+    display: inline-grid;
+    line-height: 0;
+}
+
+.stars svg {
+    grid-area: 1 / 1;
+    width: 96px;
+    height: 16px;
+}
+
+.stars__base {
+    fill: none;
+    stroke: var(--sky);
+    stroke-width: 1.1;
+}
+
+.stars__fill {
+    fill: var(--blue);
+}
+
+/* The score is shown truthfully: --fill is set in the markup to exactly
+   4.9 of 5, so the fifth star stops just short of full. */
+.stars--score .stars__fill {
+    clip-path: inset(0 calc(100% - var(--fill, 100%)) 0 0);
+}
+
+.reviews__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem clamp(1.5rem, 3vw, 3rem);
+    margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.review {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ink);
+}
+
+.review blockquote {
+    margin: 0;
+    flex: 1;
+}
+
+.review blockquote p {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 400;
+    line-height: 1.45;
+}
+
+:lang(ka) .review blockquote p {
+    font-size: var(--step-0);
+    line-height: 1.75;
+}
+
+.review__author {
+    display: grid;
+    font-weight: 500;
+}
+
+.review__author span {
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 400;
+}
+
+@media (max-width: 860px) {
+    .reviews__list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Delight: as the rating scrolls in, the stars fill left to right and
+   settle at 4.9, not a rounded-up 5. The review rules draw across in the
+   same thin-line gesture as the services, one after another. Scroll-linked
+   so the visitor sets the pace; without scroll timelines everything is
+   simply drawn. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .stars--score .stars__fill {
+            animation: star-fill linear both;
+            animation-timeline: view();
+            animation-range: entry 40% cover 45%;
+        }
+
+        .review {
+            position: relative;
+            border-top-color: transparent;
+        }
+
+        .review::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--ink);
+            transform-origin: left;
+            animation: rule-draw linear both;
+            animation-timeline: view();
+            animation-range: entry 0% cover 24%;
+        }
+
+        .review:nth-child(2)::before {
+            animation-range: entry 10% cover 30%;
+        }
+
+        .review:nth-child(3)::before {
+            animation-range: entry 20% cover 36%;
+        }
+    }
+}
+
+@keyframes star-fill {
+    from {
+        clip-path: inset(0 100% 0 0);
+    }
+}
+
 /* ---------- Contact ---------- */
 .contact {
     display: grid;
@@ -1519,6 +1683,12 @@ ul {
 ::selection {
     background: var(--sky);
     color: var(--ink);
+}
+
+/* Hero panel is --sky itself, so invert there. */
+.hero__panel ::selection {
+    background: var(--ink);
+    color: var(--white);
 }
 
 html {
