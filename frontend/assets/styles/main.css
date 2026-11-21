@@ -1222,6 +1222,32 @@ ul {
     font-weight: 400;
 }
 
+/* Arc card: a soft sky ground whose top-left corner takes the curve of the
+   logo's "(". Reviews are trimmed sooner, at 5 lines. */
+.review.review--arc {
+    padding: clamp(1.5rem, 2.5vw, 2.25rem);
+    border-top: 0;
+    background: var(--sky-soft);
+    border-radius: clamp(3rem, 6vw, 5rem) var(--radius-sm) var(--radius-sm) var(--radius-sm);
+}
+
+.review.review--arc::before {
+    display: none;
+}
+
+.review--arc blockquote {
+    --review-lines: 5;
+    color: var(--ink);
+}
+
+.review--arc .review__author span {
+    color: #4a5d70;
+}
+
+.review--arc .stars {
+    padding-left: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
 @media (max-width: 860px) {
     .reviews__list {
         grid-template-columns: 1fr;
