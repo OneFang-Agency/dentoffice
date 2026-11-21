@@ -348,6 +348,29 @@
         arcIO.observe(footerArc);
     }
 
+    /* ---------- Reviews: "( 1 / 3 )" counter for the swipeable row on phones ---------- */
+    var reviewList = document.querySelector(".reviews__list");
+    if (reviewList && reviewList.children.length > 1) {
+        var pager = document.createElement("p");
+        pager.className = "reviews__pager";
+        pager.setAttribute("aria-hidden", "true");
+        reviewList.insertAdjacentElement("afterend", pager);
+        var cards = reviewList.children;
+        var shown = -1;
+        function updatePager() {
+            var step = cards[1].offsetLeft - cards[0].offsetLeft || 1;
+            var i = Math.round(reviewList.scrollLeft / step);
+            if (reviewList.scrollLeft + reviewList.clientWidth >= reviewList.scrollWidth - 2) i = cards.length - 1;
+            i = Math.max(0, Math.min(cards.length - 1, i));
+            if (i === shown) return;
+            shown = i;
+            pager.innerHTML = "<span>(</span>" + (i + 1) + " / " + cards.length + "<span>)</span>";
+        }
+        reviewList.addEventListener("scroll", updatePager, { passive: true });
+        window.addEventListener("resize", updatePager);
+        updatePager();
+    }
+
     /* ---------- Footer year ---------- */
     var year = document.querySelector("[data-year]");
     if (year) year.textContent = new Date().getFullYear();

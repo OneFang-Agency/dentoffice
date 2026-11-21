@@ -872,6 +872,10 @@ ul {
     font-weight: 400;
 }
 
+.hours__table th {
+    padding-right: 1rem;
+}
+
 .hours__table td {
     text-align: right;
     font-variant-numeric: tabular-nums;
@@ -1248,9 +1252,30 @@ ul {
     padding-left: clamp(0.75rem, 1.5vw, 1.25rem);
 }
 
+/* Below 860px the reviews become one swipeable row instead of a tall stack:
+   each card keeps a readable measure, and the next one peeks in from the
+   edge to show there is more. The row bleeds to the screen edges so cards
+   slide under the gutter, but each one snaps back in line with the text. */
 @media (max-width: 860px) {
     .reviews__list {
-        grid-template-columns: 1fr;
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: min(85%, 26rem);
+        margin-inline: calc(-1 * var(--gutter));
+        padding: 0 var(--gutter) 0.5rem;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: var(--gutter);
+        scrollbar-width: none;
+    }
+
+    .reviews__list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .reviews__list > li {
+        scroll-snap-align: start;
     }
 }
 
@@ -1866,6 +1891,35 @@ ul {
     .hours__mark {
         display: none;
     }
+
+    /* Day above its hours: no label or value is squeezed into a broken
+       two-line wrap beside the other */
+    .hours__table th,
+    .hours__table td {
+        display: block;
+        padding-right: 0;
+        text-align: left;
+    }
+
+    .hours__table th {
+        padding-bottom: 0.125rem;
+        color: var(--muted);
+        font-size: var(--step--1);
+    }
+
+    .hours__table td {
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    /* Two equal, full-width tap targets, whatever the label length */
+    .contact__actions {
+        flex-direction: column;
+    }
+
+    .contact__actions .btn {
+        justify-content: center;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2091,4 +2145,197 @@ li {
     background: var(--ink);
     border-color: var(--ink);
     color: var(--white);
+}
+
+/* ==========================================================================
+   Small screens: the logo's ( ) travels with the thumb.
+   On a phone there is no hover, so the moments the desktop reveals on hover
+   are revealed by scrolling and touching instead, and the stacked layout
+   picks up the same curves and brackets the desktop is built from.
+   ========================================================================== */
+
+/* Every button answers the press, like a key going down */
+.btn {
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+@media (hover: none) {
+    /* Pressing the hero call button leans the "(" in, as hovering does */
+    .hero__content:has(.hero__actions .btn:active) .hero__arc {
+        transform: translateX(0.5rem);
+    }
+
+    .hero__content:has(.hero__actions .btn:active) .hero__arc path {
+        stroke-width: 1.9;
+    }
+
+    /* The emergency number is bracketed on touch screens too */
+    .service--urgent a::before,
+    .service--urgent a::after {
+        opacity: 1;
+    }
+
+    .service--urgent a::before {
+        transform: translate(-0.12em, -54%);
+    }
+
+    .service--urgent a::after {
+        transform: translate(0.12em, -54%);
+    }
+}
+
+/* ...and the brackets close in as the number scrolls into reach */
+@supports (animation-timeline: view()) {
+    @media (hover: none) and (prefers-reduced-motion: no-preference) {
+        .service--urgent a::before {
+            animation: bracket-in-open linear both;
+            animation-timeline: view();
+            animation-range: entry 40% cover 45%;
+        }
+
+        .service--urgent a::after {
+            animation: bracket-in-close linear both;
+            animation-timeline: view();
+            animation-range: entry 40% cover 45%;
+        }
+    }
+}
+
+@keyframes bracket-in-open {
+    from {
+        opacity: 0;
+        transform: translate(-0.6em, -54%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-0.12em, -54%);
+    }
+}
+
+@keyframes bracket-in-close {
+    from {
+        opacity: 0;
+        transform: translate(0.6em, -54%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0.12em, -54%);
+    }
+}
+
+/* The call bar knows the clinic is open: a green dot on "Call" while it is */
+body:has(.hero .hours__status[data-state="open"]) .call-bar .btn:first-child::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #57c08c;
+}
+
+/* Reviews counter, built by main.js: "( 1 / 3 )" under the swipeable row */
+.reviews__pager {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    /* The photo rises into the sky panel, its corner cut to the logo's
+       curve, so the hero ends in an arc instead of a hard edge. */
+    .hero__panel {
+        padding-bottom: 4.75rem;
+    }
+
+    .hero__media {
+        z-index: 1;
+        margin: -2.5rem 0 0 var(--gutter);
+        overflow: hidden;
+        border-top-left-radius: clamp(4.5rem, 20vw, 8rem);
+    }
+}
+
+@media (max-width: 860px) {
+    .reviews__pager {
+        display: flex;
+        justify-content: center;
+        gap: 0.4em;
+        margin-top: 1.25rem;
+        color: var(--muted);
+        font-family: var(--font-display);
+        font-size: var(--step-1);
+        font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    .reviews__pager span {
+        color: var(--sky);
+    }
+}
+
+/* The card in reach is in focus; its neighbours wait a step back */
+@supports (animation-timeline: view()) {
+    @media (max-width: 860px) and (prefers-reduced-motion: no-preference) {
+        .reviews__list > li {
+            animation: card-focus linear both;
+            animation-timeline: view(inline);
+        }
+    }
+}
+
+@keyframes card-focus {
+    0%,
+    10% {
+        opacity: 0.45;
+        transform: scale(0.96);
+    }
+
+    38%,
+    62% {
+        opacity: 1;
+        transform: none;
+    }
+
+    90%,
+    100% {
+        opacity: 0.45;
+        transform: scale(0.96);
+    }
+}
+
+@media (max-width: 640px) {
+    /* Services: each group's name, with its count in brackets, stays
+       pinned under the header while you scroll its list. */
+    .service-group h3 {
+        position: sticky;
+        top: var(--header-h);
+        z-index: 2;
+        margin-block: -0.75rem;
+        padding-block: 0.75rem;
+        background: var(--paper);
+    }
+
+    .service-group h3::after {
+        margin-inline-start: 0.4em;
+        color: var(--blue);
+        font-weight: 400;
+    }
+
+    .service-group:has(.service-list > li:nth-child(2):last-child) h3::after {
+        content: "(2)";
+    }
+
+    .service-group:has(.service-list > li:nth-child(3):last-child) h3::after {
+        content: "(3)";
+    }
+
+    .service-group:has(.service-list > li:nth-child(4):last-child) h3::after {
+        content: "(4)";
+    }
+
+    .service-group:has(.service-list > li:nth-child(5):last-child) h3::after {
+        content: "(5)";
+    }
 }
