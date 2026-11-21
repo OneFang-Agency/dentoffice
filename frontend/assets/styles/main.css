@@ -390,24 +390,30 @@ ul {
     overflow: visible;
 }
 
-.hero__welcome {
-    margin-bottom: 1rem;
-    font-size: var(--step-1);
-    font-weight: 300;
-}
-
 .hero h1 {
     max-width: 13ch;
-    font-size: var(--step-4);
+    font-size: clamp(3rem, 1.6rem + 4vw, 5.5rem);
     font-weight: 300;
     line-height: 1.04;
 }
 
 :lang(ka) .hero h1 {
     max-width: 20ch;
-    font-size: clamp(2rem, 1.2rem + 2.6vw, 3.25rem);
+    font-size: clamp(2.25rem, 1.2rem + 3.2vw, 4rem);
     line-height: 1.2;
     overflow-wrap: anywhere;
+}
+
+.hero__lede {
+    max-width: 30ch;
+    margin-top: 1rem;
+    font-size: var(--step-1);
+    font-weight: 300;
+    text-wrap: balance;
+}
+
+:lang(ka) .hero__lede {
+    max-width: 40ch;
 }
 
 .hero__actions {
@@ -422,12 +428,6 @@ ul {
 .hero__actions .hours__status {
     flex-basis: 100%;
     margin-top: -0.25rem;
-}
-
-.hero__details {
-    margin-top: 2rem;
-    font-style: normal;
-    font-weight: 300;
 }
 
 /* Short laptops: keep the call button above the fold */
@@ -479,20 +479,16 @@ ul {
         animation: settle 0.9s var(--ease) both;
     }
 
-    .hero__welcome {
+    .hero h1 {
         animation-delay: 0.55s !important;
     }
 
-    .hero h1 {
+    .hero__lede {
         animation-delay: 0.7s !important;
     }
 
     .hero__actions {
         animation-delay: 0.9s !important;
-    }
-
-    .hero__details {
-        animation-delay: 1s !important;
     }
 
     .hero__media img {
@@ -916,29 +912,169 @@ ul {
     object-fit: cover;
 }
 
+/* Delight: the logo's "( )" opens to introduce the people. The photo
+   arrives held between two curved sides, like the brackets, and opens
+   out to its full frame as it scrolls in, the faces settling as it does.
+   Scroll-linked, so the visitor sets the pace; without scroll timelines
+   (or with reduced motion) the photo is simply there. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .team__photo {
+            animation: brackets-open linear both;
+            animation-timeline: view();
+            animation-range: entry 10% cover 45%;
+        }
+
+        .team__photo img {
+            animation: faces-settle linear both;
+            animation-timeline: view();
+            animation-range: entry 10% cover 45%;
+        }
+    }
+}
+
+@keyframes brackets-open {
+    from {
+        clip-path: inset(0 9% round 22% / 50%);
+    }
+
+    to {
+        clip-path: inset(0 0 round 0% / 0%);
+    }
+}
+
+@keyframes faces-settle {
+    from {
+        transform: scale(1.08);
+    }
+
+    to {
+        transform: none;
+    }
+}
+
+/* Heading and link share the left column; the one-sentence intro is set
+   as a statement across the right column, out to the photo's edge. */
 .team__text {
     display: grid;
     grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    grid-template-areas:
+        "title statement"
+        "link  statement";
+    grid-template-rows: auto 1fr;
     gap: 1.5rem clamp(2.5rem, 6vw, 6rem);
     margin-top: clamp(2rem, 4vw, 3.5rem);
 }
 
+.team__text h2 {
+    grid-area: title;
+}
+
 .team__text p {
-    max-width: 40ch;
+    grid-area: statement;
     font-family: var(--font-display);
-    font-size: var(--step-2);
+    font-size: clamp(1.75rem, 1rem + 2.2vw, 2.75rem);
     font-weight: 300;
-    line-height: 1.35;
+    font-variant-numeric: lining-nums;
+    line-height: 1.2;
+    color: var(--ink);
+    text-wrap: balance;
 }
 
 :lang(ka) .team__text p {
-    font-size: 1.375rem;
-    line-height: 1.6;
+    font-size: clamp(1.375rem, 0.9rem + 1.4vw, 2rem);
+    line-height: 1.5;
+}
+
+/* Delight: the statement's two facts are held in the logo's "( )".
+   Each number keeps a little room either side; the brackets sit in it,
+   outside the flow. As the statement scrolls in, just after the photo
+   has opened, they close in around the numbers. Without scroll timelines
+   (or with reduced motion) they are simply drawn. */
+.team__fact {
+    position: relative;
+    display: inline-block;
+    padding-inline: 0.36em;
+    white-space: nowrap;
+}
+
+.team__fact::before,
+.team__fact::after {
+    position: absolute;
+    top: 50%;
+    color: var(--sky);
+    font-weight: 300;
+    font-size: 1.2em;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.team__fact::before {
+    content: "(";
+    content: "(" / "";
+    left: 0;
+    transform: translate(0.04em, -56%);
+}
+
+.team__fact::after {
+    content: ")";
+    content: ")" / "";
+    right: 0;
+    transform: translate(-0.04em, -56%);
+}
+
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .team__fact::before,
+        .team__fact::after {
+            animation: fact-hold-left linear both;
+            animation-timeline: --team-statement;
+            animation-range: entry 60% cover 40%;
+        }
+
+        .team__fact::after {
+            animation-name: fact-hold-right;
+        }
+
+        .team__text p {
+            view-timeline: --team-statement block;
+        }
+
+        .team__fact:last-child::before,
+        .team__fact:last-child::after {
+            animation-range: entry 80% cover 48%;
+        }
+    }
+}
+
+@keyframes fact-hold-left {
+    from {
+        opacity: 0;
+        transform: translate(-0.55em, -56%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0.04em, -56%);
+    }
+}
+
+@keyframes fact-hold-right {
+    from {
+        opacity: 0;
+        transform: translate(0.55em, -56%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-0.04em, -56%);
+    }
 }
 
 .team__text .text-link {
-    display: inline-block;
-    margin-top: 1.5rem;
+    grid-area: link;
+    align-self: end;
+    justify-self: start;
 }
 
 /* ---------- Reviews ---------- */
@@ -1028,16 +1164,51 @@ ul {
     flex: 1;
 }
 
-.review blockquote p {
+.review blockquote {
+    --review-lh: 1.45;
+    --review-lines: 8;
     font-family: var(--font-display);
     font-size: var(--step-1);
     font-weight: 400;
-    line-height: 1.45;
+    font-variant-numeric: lining-nums;
+    line-height: var(--review-lh);
 }
 
-:lang(ka) .review blockquote p {
-    font-size: var(--step-0);
-    line-height: 1.75;
+.review blockquote p + p {
+    margin-top: 0.75em;
+}
+
+/* Long reviews are trimmed to a few lines and fade out; "Read more"
+   opens the rest in place. main.js only clamps reviews that overflow,
+   so without JS every review is shown in full. */
+.review blockquote.is-clamped {
+    max-height: calc(var(--review-lines) * var(--review-lh) * 1em);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5em), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5em), transparent);
+}
+
+.review blockquote.is-clamped.is-open {
+    max-height: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+
+.review__more {
+    align-self: flex-start;
+    margin-top: -0.25rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--step--1);
+    cursor: pointer;
+}
+
+/* The author keeps to the bottom whether or not the review is trimmed */
+.review blockquote:not(.is-open) {
+    flex: 1;
 }
 
 .review__author {
@@ -1214,6 +1385,34 @@ ul {
     color: var(--sky);
     opacity: 0.55;
     pointer-events: none;
+}
+
+/* Same draw as the hero's "(", started when the footer comes into view
+   (main.js adds the classes; without it the arc is simply drawn). */
+.will-draw .footer__arc path {
+    stroke-dasharray: var(--arc-len);
+    stroke-dashoffset: var(--arc-len);
+}
+
+.will-draw.is-drawn .footer__arc path {
+    animation: draw-arc-px 1.6s var(--ease) 0.15s both;
+}
+
+@keyframes draw-arc-px {
+    from {
+        stroke-dashoffset: var(--arc-len);
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .will-draw .footer__arc path {
+        stroke-dasharray: none;
+        stroke-dashoffset: 0;
+    }
 }
 
 .footer__grid {
@@ -1555,6 +1754,19 @@ ul {
     .team__text,
     .contact {
         grid-template-columns: 1fr;
+    }
+
+    .team__text {
+        grid-template-areas:
+            "title"
+            "statement"
+            "link";
+        grid-template-rows: auto;
+        row-gap: 1rem;
+    }
+
+    .team__text .text-link {
+        margin-top: 0.5rem;
     }
 
     .services .section-head {

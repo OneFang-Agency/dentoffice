@@ -16,7 +16,9 @@
             errContact: "შეიყვანეთ ტელეფონი ან ელ. ფოსტა, რომ გიპასუხოთ",
             errMessage: "დაწერეთ შეტყობინება",
             mapFallback: "რუკის ჩატვირთვა ვერ მოხერხდა. მისამართი: ვიქტორ დოლიძის ქ. 46, თბილისი",
-            pin: "დენთ ოფისი"
+            readMore: "მეტის წაკითხვა",
+            readLess: "შეკეცვა",
+            pin: "დენტ ოფისი"
         },
         en: {
             openNow: "Open now, closes at 19:00",
@@ -30,6 +32,8 @@
             errContact: "Enter a phone number or email so we can reply",
             errMessage: "Write your message",
             mapFallback: "The map didn't load. Address: 46 Viktor Dolidze St, Tbilisi",
+            readMore: "Read more",
+            readLess: "Show less",
             pin: "DentOffice"
         }
     }[lang];
@@ -255,6 +259,93 @@
         new IntersectionObserver(function (entries) {
             callBar.classList.toggle("is-tucked", entries[0].isIntersecting);
         }).observe(heroActions);
+    }
+
+    /* ---------- Reviews: trim long ones, "Read more" opens them in place ---------- */
+    var quotes = document.querySelectorAll(".review blockquote");
+    function clampReviews() {
+        quotes.forEach(function (q) {
+            if (q.classList.contains("is-open")) return;
+            q.classList.add("is-clamped");
+            var overflows = q.scrollHeight > q.clientHeight + 4;
+            q.classList.toggle("is-clamped", overflows);
+            var btn = q.nextElementSibling && q.nextElementSibling.classList.contains("review__more")
+                ? q.nextElementSibling : null;
+            if (overflows && !btn) {
+                btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "review__more text-link";
+                btn.textContent = t.readMore;
+                btn.setAttribute("aria-expanded", "false");
+                btn.setAttribute("aria-controls", q.id);
+                btn.addEventListener("click", function () {
+                    var open = q.classList.toggle("is-open");
+                    btn.textContent = open ? t.readLess : t.readMore;
+                    btn.setAttribute("aria-expanded", String(open));
+                    if (!open) {
+                        var top = q.closest(".review").getBoundingClientRect().top;
+                        if (top < 0) q.closest(".review").scrollIntoView({ block: "start" });
+                    }
+                });
+                q.insertAdjacentElement("afterend", btn);
+            } else if (!overflows && btn) {
+                btn.remove();
+            }
+        });
+    }
+    if (quotes.length) {
+        clampReviews();
+        var clampTimer;
+        window.addEventListener("resize", function () {
+            clearTimeout(clampTimer);
+            clampTimer = setTimeout(clampReviews, 150);
+        });
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampReviews);
+    }
+
+    /* ---------- Footer arc: the closing ")" draws like the hero's "(" ----------
+       It sits at the end of the page, so it draws when it comes into view
+       rather than on load. The arc stretches with the footer and keeps a
+       constant stroke (non-scaling-stroke), so its dash is measured in screen
+       pixels: sample the curve on screen and hand the length to the CSS.
+       Without JS or with reduced motion it is simply drawn. */
+    var footer = document.querySelector(".site-footer");
+    var footerArc = footer && footer.querySelector(".footer__arc");
+    var arcPath = footerArc && footerArc.querySelector("path");
+    var motionOK = window.matchMedia && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function screenLength(path) {
+        var m = path.getScreenCTM();
+        var total = path.getTotalLength();
+        var len = 0, prev = null;
+        for (var i = 0; i <= 64; i++) {
+            var p = path.getPointAtLength((total * i) / 64);
+            var x = m.a * p.x + m.c * p.y, y = m.b * p.x + m.d * p.y;
+            if (prev) len += Math.hypot(x - prev[0], y - prev[1]);
+            prev = [x, y];
+        }
+        return Math.ceil(len) + 2;
+    }
+
+    if (arcPath && motionOK && "IntersectionObserver" in window && arcPath.getScreenCTM) {
+        var setArcLength = function () {
+            footer.style.setProperty("--arc-len", screenLength(arcPath) + "px");
+        };
+        setArcLength();
+        footer.classList.add("will-draw");
+        window.addEventListener("resize", setArcLength);
+
+        var arcIO = new IntersectionObserver(function (entries) {
+            if (entries[0].isIntersecting) {
+                arcIO.disconnect();
+                footer.classList.add("is-drawn");
+                arcPath.addEventListener("animationend", function () {
+                    window.removeEventListener("resize", setArcLength);
+                    footer.classList.remove("will-draw", "is-drawn");
+                }, { once: true });
+            }
+        }, { threshold: 0.5 });
+        arcIO.observe(footerArc);
     }
 
     /* ---------- Footer year ---------- */

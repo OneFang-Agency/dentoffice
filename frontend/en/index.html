@@ -66,8 +66,8 @@
                             stroke-width="1.1" stroke-linecap="round" />
                     </svg>
 
-                    <p class="hero__welcome">Welcome to DentOffice</p>
-                    <h1 id="hero-title">Dental care you can rely on</h1>
+                    <h1 id="hero-title">DentOffice</h1>
+                    <p class="hero__lede">A friendly dental clinic in Saburtalo, since 2010.</p>
 
                     <div class="hero__actions">
                         <a class="btn" href="tel:+995322907790">
@@ -77,8 +77,6 @@
                         <a class="text-link" href="#contact" data-open-message>Send a message</a>
                         <p class="hours__status" data-hours-status>Mon – Sat, 10:00 – 19:00</p>
                     </div>
-
-                    <address class="hero__details">46 Viktor Dolidze St, Saburtalo, Tbilisi</address>
                 </div>
             </div>
 
@@ -240,16 +238,14 @@
                 </figure>
                 <div class="team__text">
                     <h2 id="team-title">The team</h2>
-                    <div>
-                        <p>Since our founding in 2010, DentOffice has been a dental clinic with a friendly environment and a professional team of 15.</p>
-                        <a class="text-link" href="about.html">Meet the team</a>
-                    </div>
+                    <p>A professional team of <span class="team__fact">15</span> and a friendly environment, since <span class="team__fact">2010</span>.</p>
+                    <a class="text-link" href="about.html">Meet the team</a>
                 </div>
             </div>
         </section>
 
         <!-- reviews (from Google Maps) -->
-        <!-- TODO: replace the placeholder reviews and verify the rating against the live Google Maps profile -->
+        <!-- TODO: confirm each review's star rating and the overall 4.9 against the live Google Maps profile -->
         <section class="section section--flush-top reviews" aria-labelledby="reviews-title">
             <div class="container">
                 <svg class="visually-hidden" aria-hidden="true" focusable="false">
@@ -274,24 +270,28 @@
                 <ul class="reviews__list">
                     <li class="review">
                         <span class="stars" role="img" aria-label="5 out of 5 stars"><svg class="stars__fill" viewBox="0 0 96 16" width="96" height="16" aria-hidden="true"><use href="#star" x="0" width="16" height="16" /><use href="#star" x="20" width="16" height="16" /><use href="#star" x="40" width="16" height="16" /><use href="#star" x="60" width="16" height="16" /><use href="#star" x="80" width="16" height="16" /></svg></span>
-                        <blockquote>
-                            <p>[Review text from Google Maps]</p>
+                        <blockquote id="review-1">
+                            <p>I would like to leave a warm and sincere review for the Dent Office clinic in Saburtalo!</p>
+                            <p>My visit left me with wonderful impressions. The clinic is spotless and bright, and the receptionist was very polite and pleasant.</p>
+                            <p>A special and huge thank you goes to our orthodontist, Dr. Natia! She is an incredibly skilled and professional specialist. I brought my 12-year-old daughter in, and Dr. Natia demonstrated exceptional expertise right from the start. She immediately identified the issue and jumped straight into solving it—quickly, efficiently, and without any unnecessary extra procedures. She explained everything clearly and broke down the entire treatment plan step by step.</p>
+                            <p>Most importantly, her approach with children is amazing. My daughter is terrified of pain and usually refuses any uncomfortable procedure, but Dr. Natia instantly found the right approach and gained her trust. She managed to gently remove a firmly rooted baby tooth that was blocking proper growth, and the whole process was so smooth that my daughter didn't panic at all!</p>
+                            <p>Thank you so much for your professionalism, efficiency, and caring attitude. For any orthodontic needs, we will only be coming back to Dr. Natia at Dent Office. Highly recommended!</p>
                         </blockquote>
-                        <p class="review__author">[Patient name] 1<span>Google review</span></p>
+                        <p class="review__author">Diva Smyrnova<span>Google review</span></p>
                     </li>
                     <li class="review">
                         <span class="stars" role="img" aria-label="5 out of 5 stars"><svg class="stars__fill" viewBox="0 0 96 16" width="96" height="16" aria-hidden="true"><use href="#star" x="0" width="16" height="16" /><use href="#star" x="20" width="16" height="16" /><use href="#star" x="40" width="16" height="16" /><use href="#star" x="60" width="16" height="16" /><use href="#star" x="80" width="16" height="16" /></svg></span>
-                        <blockquote>
-                            <p>[Review text from Google Maps]</p>
+                        <blockquote id="review-2">
+                            <p>Can highly recommend Dent Office and Dr. Nana for seeing me at the last minute and helping with a dental emergency. She was incredibly professional, caring, and spoke perfect English, which made the whole experience much less stressful. She took the time to examine everything thoroughly and explained the situation in great detail. If I lived in Tbilisi, I’d gladly have her as my regular dentist. Thank you for the excellent care!</p>
                         </blockquote>
-                        <p class="review__author">[Patient name] 2<span>Google review</span></p>
+                        <p class="review__author">Anna Vildaus<span>Google review</span></p>
                     </li>
                     <li class="review">
                         <span class="stars" role="img" aria-label="5 out of 5 stars"><svg class="stars__fill" viewBox="0 0 96 16" width="96" height="16" aria-hidden="true"><use href="#star" x="0" width="16" height="16" /><use href="#star" x="20" width="16" height="16" /><use href="#star" x="40" width="16" height="16" /><use href="#star" x="60" width="16" height="16" /><use href="#star" x="80" width="16" height="16" /></svg></span>
-                        <blockquote>
-                            <p>[Review text from Google Maps]</p>
+                        <blockquote id="review-3">
+                            <p>This is not my first time visiting Dr. Nana! No matter which country I happen to be in, I always make sure to see her for my dental needs. It has been the best experience—whether for treatment, check-ups, or teeth cleaning. Thank you so much!</p>
                         </blockquote>
-                        <p class="review__author">[Patient name] 3<span>Google review</span></p>
+                        <p class="review__author">Anton Korotkov<span>Google review</span></p>
                     </li>
                 </ul>
             </div>
@@ -349,7 +349,7 @@
                     <a class="logo" href="index.html" aria-label="DentOffice home">
                         <img src="../assets/images/DO-Logo.avif" alt="" width="56" height="56" loading="lazy">
                     </a>
-                    <p>Dental care you can rely on.</p>
+                    <p>A friendly dental clinic in Saburtalo, since 2010.</p>
                 </div>
 
                 <div>
