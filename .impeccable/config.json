@@ -1,0 +1,35 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "frontend/index.html"
+        ],
+        "createdAt": "2026-11-21T10:42:49.101Z",
+        "reason": "Claude, from detector review: static scan does not resolve clamp() padding or the specificity override on .service--urgent; the real-layout URL scan at 1280 and 390 did not reproduce these"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "frontend/en/index.html"
+        ],
+        "createdAt": "2026-11-21T10:42:49.114Z",
+        "reason": "Claude, from detector review: static scan does not resolve clamp() padding or the specificity override on .service--urgent; the real-layout URL scan at 1280 and 390 did not reproduce these"
+      },
+      {
+        "rule": "tight-leading",
+        "value": "*",
+        "files": [
+          "frontend/en/index.html"
+        ],
+        "createdAt": "2026-11-21T10:42:49.126Z",
+        "reason": "Claude, from detector review: static scan does not resolve clamp() padding or the specificity override on .service--urgent; the real-layout URL scan at 1280 and 390 did not reproduce these; no 1.28 line-height exists in main.css, body text is 1.6"
+      }
+    ]
+  }
+}
