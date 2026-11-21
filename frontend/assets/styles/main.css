@@ -658,6 +658,105 @@ ul {
     color: var(--blue);
 }
 
+/* Delight 1: each group's dark rule draws across as you scroll to it, in
+   the same thin-line language as the hero arc. Scroll-linked, so the
+   visitor sets the pace; browsers without scroll timelines keep the
+   static border. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .service-group {
+            position: relative;
+            border-top-color: transparent;
+        }
+
+        .service-group::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--ink);
+            transform-origin: left;
+            animation: rule-draw linear both;
+            animation-timeline: view();
+            animation-range: entry 0% cover 28%;
+        }
+    }
+}
+
+@keyframes rule-draw {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+/* Delight 2: the emergency number gets bracketed, the logo's "( )"
+   closing around it on hover or focus, echoing the hero call button.
+   The brackets sit outside the flow, so nothing shifts. */
+.service--urgent a {
+    position: relative;
+}
+
+.service--urgent a::before,
+.service--urgent a::after {
+    position: absolute;
+    top: 50%;
+    font-weight: 300;
+    line-height: 1;
+    font-size: 1.35em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s var(--ease), transform 0.6s var(--ease);
+}
+
+.service--urgent a::before {
+    content: "(";
+    content: "(" / "";
+    right: 100%;
+    transform: translate(-0.6em, -54%);
+}
+
+.service--urgent a::after {
+    content: ")";
+    content: ")" / "";
+    left: 100%;
+    transform: translate(0.6em, -54%);
+}
+
+.service--urgent a:focus-visible::before,
+.service--urgent a:focus-visible::after {
+    opacity: 1;
+    transform: translate(0, -54%);
+}
+
+.service--urgent a:focus-visible::before {
+    transform: translate(-0.12em, -54%);
+}
+
+.service--urgent a:focus-visible::after {
+    transform: translate(0.12em, -54%);
+}
+
+@media (hover: hover) {
+    .service--urgent a:hover::before,
+    .service--urgent a:hover::after {
+        opacity: 1;
+    }
+
+    .service--urgent a:hover::before {
+        transform: translate(-0.12em, -54%);
+    }
+
+    .service--urgent a:hover::after {
+        transform: translate(0.12em, -54%);
+    }
+}
+
 /* ---------- Clinic gallery ---------- */
 .clinic .section-head {
     display: flex;
@@ -896,6 +995,9 @@ ul {
 
 .map {
     position: relative;
+    /* Leaflet's panes use z-index 400+; keep them from rising over the
+       sticky header and the mobile call bar */
+    isolation: isolate;
     flex: 1;
     min-height: 420px;
     background: var(--sky-soft);
@@ -1013,7 +1115,10 @@ ul {
     justify-content: space-between;
     gap: 0.5rem 2rem;
     margin-top: clamp(3rem, 6vw, 5rem);
+    /* Same right inset as the grid, so the closing arc never crosses the
+       language link */
     padding-top: 1.5rem;
+    padding-right: clamp(3rem, 10vw, 9rem);
     border-top: 1px solid rgba(219, 230, 238, 0.16);
     color: #9fb1c1;
     font-size: var(--step--1);
@@ -1419,6 +1524,7 @@ ul {
 html {
     accent-color: var(--blue);
     caret-color: var(--blue);
+    scrollbar-color: #b7cfdd var(--paper);
 }
 
 h1,
@@ -1478,6 +1584,83 @@ li {
 
 .hero .hours__status[data-state="closed"]::before {
     background: var(--white);
+}
+
+/* Delight: the clinic is here right now, and the "(" holds the call.
+   1. When open, the status dot breathes: a slow ring that settles outward,
+      like a phone that will be picked up. Three breaths after the load
+      sequence, then one more only when the status really changes
+      (main.js re-adds .is-fresh). Never an endless loop. */
+.hero .hours__status {
+    position: relative;
+}
+
+.hero .hours__status[data-state="open"]::before {
+    background: #1f6b47;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .hero .hours__status.is-fresh[data-state="open"]::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 8px;
+        height: 8px;
+        margin-top: -4px;
+        border: 1px solid #1f6b47;
+        border-radius: 50%;
+        opacity: 0;
+        animation: breathe 3.2s cubic-bezier(0.16, 1, 0.3, 1) 2s 3;
+        pointer-events: none;
+    }
+
+    .hero .hours__status.is-fresh.is-update[data-state="open"]::after {
+        animation-delay: 0s;
+        animation-iteration-count: 1;
+    }
+}
+
+@keyframes breathe {
+    0% {
+        opacity: 0.9;
+        transform: scale(1);
+    }
+
+    60%,
+    100% {
+        opacity: 0;
+        transform: scale(3.2);
+    }
+}
+
+/* 2. Reaching for the call button, the bracket leans in and firms up:
+      the logo's "(" gathering the visitor before they dial. */
+.hero__arc {
+    transition: transform 0.7s var(--ease);
+}
+
+.hero__arc path {
+    transition: stroke-width 0.7s var(--ease);
+}
+
+.hero__content:has(.hero__actions .btn:focus-visible) .hero__arc {
+    transform: translateX(0.5rem);
+}
+
+.hero__content:has(.hero__actions .btn:focus-visible) .hero__arc path {
+    stroke-width: 1.9;
+}
+
+@media (hover: hover) {
+    .hero__content:has(.hero__actions .btn:hover) .hero__arc {
+        transform: translateX(0.5rem);
+    }
+
+    .hero__content:has(.hero__actions .btn:hover) .hero__arc path {
+        stroke-width: 1.9;
+    }
 }
 
 /* The call bar steps aside while the hero's own call button is on screen */

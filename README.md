@@ -99,13 +99,13 @@ Georgian-specific rules:
 
 ### Motion
 
-There is one load sequence: the hero arc draws, then the hero text settles in. The booking popup fades in when opened. Everything else is static, and all motion is switched off under `prefers-reduced-motion`.
+There is one load sequence: the hero arc draws, then the hero text settles in. Two small touches follow in the hero. When the clinic is open, the status dot breathes three times, then once more each time the status changes. Hovering or focusing the call button makes the arc lean in and thicken slightly. In Services, each group's dark rule draws across as it scrolls into view (only in browsers with scroll-driven animations; others show the static line), and the emergency number gets a pair of brackets, `( )`, on hover or focus. The booking popup fades in when opened. Everything else is static, and all motion is switched off under `prefers-reduced-motion`.
 
 ## Behaviour (`main.js`)
 
 - **Header:** a border appears once the page scrolls.
 - **Mobile menu:** toggles with the menu button and closes on Escape.
-- **Office hours status:** works out Tbilisi time (`Asia/Tbilisi`) and shows open now, opens today, closed, or "Sunday by appointment".
+- **Office hours status:** works out Tbilisi time (`Asia/Tbilisi`) and shows open now, opens today, closed, or "Sunday by appointment". It re-checks every 30 seconds and counts down in the last hour before opening or closing ("closes in 25 min").
 - **Live status:** fills every element marked `data-hours-status` (the hero and the hours card).
 - **Contact popup:** any link with `data-open-message` opens it. These are links to `#contact`, so without JavaScript they scroll to the contact section instead. All three fields are required. A half-written message survives closing and reopening; the form only resets after a message is "sent". It closes with the × button or Escape.
 - **Map:** Leaflet 1.9.4 from cdnjs with OpenStreetMap tiles. Leaflet loads only when the map comes within 600px of the viewport, so a slow CDN can't hold up the rest of the page. The tiles are toned down and the pin is a custom blue dot. Coordinates for 46 Viktor Dolidze St are `41.716167, 44.771934`, taken from OpenStreetMap's address search. If Leaflet fails to load, the address is shown as text.
@@ -140,6 +140,7 @@ There is one load sequence: the hero arc draws, then the hero text settles in. T
 **All Georgian text is a draft by Claude and needs review by a native speaker.** The lines to check most carefully:
 
 - Hero headline: "მზრუნველობა, რომელსაც შეგიძლიათ ენდოთ"
+- Countdown strings in `main.js`: "ახლა ღიაა, დაიხურება {m} წუთში" and "გაიხსნება {m} წუთში"
 - The service names and descriptions
 - The brand spelling "დენთ ოფისი", taken from the storefront sign
 

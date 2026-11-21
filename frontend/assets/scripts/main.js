@@ -6,7 +6,9 @@
     var t = {
         ka: {
             openNow: "ახლა ღიაა, დაიხურება 19:00-ზე",
+            closesIn: "ახლა ღიაა, დაიხურება {m} წუთში",
             opensToday: "დღეს გაიხსნება 10:00-ზე",
+            opensIn: "გაიხსნება {m} წუთში",
             closedNow: "ახლა დაკეტილია, ხვალ 10:00-დან",
             sunday: "დღეს მხოლოდ წინასწარი ჩაწერით",
             saturdayClosed: "ახლა დაკეტილია, კვირას მხოლოდ ჩაწერით",
@@ -18,7 +20,9 @@
         },
         en: {
             openNow: "Open now, closes at 19:00",
+            closesIn: "Open now, closes in {m} min",
             opensToday: "Opens today at 10:00",
+            opensIn: "Opens in {m} min",
             closedNow: "Closed now, opens tomorrow at 10:00",
             sunday: "Today by appointment only",
             saturdayClosed: "Closed now, Sunday by appointment only",
@@ -59,15 +63,19 @@
     });
 
     /* ---------- Office hours: live status in Tbilisi time ---------- */
+    /* Re-checked every 30s, so a tab left open past 19:00 doesn't keep saying
+       "open". In the last hour before opening or closing it counts down. */
     var statuses = document.querySelectorAll("[data-hours-status]");
-    if (statuses.length) {
-        var parts = new Intl.DateTimeFormat("en-GB", {
-            timeZone: "Asia/Tbilisi",
-            weekday: "short",
-            hour: "2-digit",
-            minute: "2-digit",
-            hourCycle: "h23"
-        }).formatToParts(new Date());
+    var clock = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Tbilisi",
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23"
+    });
+
+    function updateStatus() {
+        var parts = clock.formatToParts(new Date());
         var get = function (type) {
             for (var i = 0; i < parts.length; i++) if (parts[i].type === type) return parts[i].value;
         };
@@ -80,16 +88,28 @@
             text = t.sunday;
         } else if (minutes >= 600 && minutes < 1140) {
             state = "open";
-            text = t.openNow;
+            text = minutes >= 1080 ? t.closesIn.replace("{m}", 1140 - minutes) : t.openNow;
         } else if (minutes < 600) {
-            text = t.opensToday;
+            text = minutes >= 540 ? t.opensIn.replace("{m}", 600 - minutes) : t.opensToday;
         } else {
             text = day === "Sat" ? t.saturdayClosed : t.closedNow;
         }
         statuses.forEach(function (el) {
+            if (el.textContent === text) return;
+            var first = !el.hasAttribute("data-state");
             el.textContent = text;
             el.setAttribute("data-state", state);
+            // The hero dot breathes when the status changes, not on a loop
+            el.classList.remove("is-fresh");
+            void el.offsetWidth;
+            el.classList.toggle("is-update", !first);
+            el.classList.add("is-fresh");
         });
+    }
+
+    if (statuses.length) {
+        updateStatus();
+        setInterval(updateStatus, 30000);
     }
 
     /* ---------- Contact popup (demo: nothing is sent) ----------
